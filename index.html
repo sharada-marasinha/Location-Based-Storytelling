@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StorySpot - Interactive Location-Based Storytelling</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- AOS Library for Animations -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <!-- Sweet Alert -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="bg-gray-100">
+    <nav class="bg-blue-600 text-white p-4 shadow-md">
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mr-3" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
+                </svg>
+                <h1 class="text-2xl font-bold">StorySpot</h1>
+            </div>
+            <div class="hidden md:flex space-x-4">
+                <a href="#" class="hover:bg-blue-700 px-3 py-2 rounded transition">Home</a>
+                <a href="#" class="hover:bg-blue-700 px-3 py-2 rounded transition">Stories</a>
+                <a href="#" class="hover:bg-blue-700 px-3 py-2 rounded transition">About</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mx-auto px-4 py-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Map Section -->
+            <div class="bg-white rounded-lg shadow-lg p-4" data-aos="fade-right">
+                <div id="map" class="h-96 rounded-lg"></div>
+                <div id="locationInfo" class="mt-4 text-center">
+                    <p id="currentLocation" class="text-gray-600 font-semibold">Select a location on the map</p>
+                </div>
+            </div>
+
+            <!-- Story Creation Form -->
+            <div class="bg-white rounded-lg shadow-lg p-4" data-aos="fade-left">
+                <h2 class="text-xl font-bold mb-4 text-center">Create a Story</h2>
+                <form id="storyForm" class="space-y-4">
+                    <div>
+                        <label class="block text-gray-700 mb-2" for="title">Title</label>
+                        <input type="text" id="title" class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 transition" required>
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 mb-2" for="description">Story</label>
+                        <textarea id="description" class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 transition" rows="4" required></textarea>
+                    </div>
+                    
+                    <!-- Location Details -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-gray-700 mb-2" for="locationName">Location Name</label>
+                            <input type="text" id="locationName" readonly 
+                                class="w-full p-2 border rounded bg-gray-100 cursor-not-allowed">
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 mb-2" for="locationCity">City</label>
+                            <input type="text" id="locationCity" readonly 
+                                class="w-full p-2 border rounded bg-gray-100 cursor-not-allowed">
+                        </div>
+                    </div>
+                    
+                    <!-- Coordinates -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-gray-700 mb-2" for="latitude">Latitude</label>
+                            <input type="text" id="latitude" readonly 
+                                class="w-full p-2 border rounded bg-gray-100 cursor-not-allowed">
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 mb-2" for="longitude">Longitude</label>
+                            <input type="text" id="longitude" readonly 
+                                class="w-full p-2 border rounded bg-gray-100 cursor-not-allowed">
+                        </div>
+                    </div>
+                    
+                    <!-- Location Selection Button -->
+                    <div>
+                        <button type="button" id="selectLocationBtn" 
+                            class="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition flex items-center justify-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
+                            </svg>
+                            Select Story Location
+                        </button>
+                    </div>
+                    
+                    <!-- Image Upload with Preview -->
+                    <div>
+                        <label class="block text-gray-700 mb-2" for="image">Image URL (Optional)</label>
+                        <input type="file" id="image" accept="image/*" 
+                            class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 transition"
+                            onchange="previewImage(event)">
+                        
+                        <!-- Image Preview Container -->
+                        <div id="imagePreviewContainer" class="mt-4 hidden">
+                            <img id="imagePreview" src="#" alt="Image Preview" 
+                                class="max-w-full h-auto rounded shadow-md">
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="w-full bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
+                        Create Story
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Stories Display Section -->
+        <section class="mt-8" data-aos="fade-up">
+            <h2 class="text-2xl font-bold mb-4 text-center">Recent Stories</h2>
+            <div id="storiesContainer" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <!-- Stories will be dynamically added here -->
+            </div>
+        </section>
+
+        <!-- Sentiment Analysis Chart -->
+        <section class="mt-8" data-aos="fade-up">
+            <div class="bg-white rounded-lg shadow-lg p-4">
+                <h2 class="text-xl font-bold mb-4 text-center">Story Sentiments Overview</h2>
+                <div class="max-w-xl mx-auto">
+                    <canvas id="sentimentChart"></canvas>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-blue-600 text-white py-4 mt-8">
+        <div class="container mx-auto text-center">
+            <p>&copy; 2024 StorySpot. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>AOS.init();</script>
+    <script src="js/map.js"></script>
+    <script src="js/ai.js"></script>
+    <script src="js/main.js"></script>
+
+    <!-- Image Preview and Location Selection Script -->
+    <script>
+    function previewImage(event) {
+        const input = event.target;
+        const previewContainer = document.getElementById('imagePreviewContainer');
+        const previewImage = document.getElementById('imagePreview');
+        
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                previewImage.src = e.target.result;
+                previewContainer.classList.remove('hidden');
+            }
+            
+            reader.readAsDataURL(input.files[0]);
+        } else {
+            previewContainer.classList.add('hidden');
+        }
+    }
+
+    // Event listener for location selection
+    document.addEventListener('locationSelected', (event) => {
+        const { fullAddress, city, latitude, longitude } = event.detail;
+        
+        // Populate location inputs
+        document.getElementById('locationName').value = fullAddress;
+        document.getElementById('locationCity').value = city;
+        document.getElementById('latitude').value = latitude.toFixed(4);
+        document.getElementById('longitude').value = longitude.toFixed(4);
+    });
+
+    // Add event listener for location selection button
+    document.addEventListener('DOMContentLoaded', () => {
+        const locationSelectBtn = document.getElementById('selectLocationBtn');
+        if (locationSelectBtn) {
+            locationSelectBtn.addEventListener('click', () => {
+                if (window.startLocationSelection) {
+                    window.startLocationSelection();
+                }
+            });
+        }
+    });
+    </script>
+</body>
+</html>
